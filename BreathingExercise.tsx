@@ -219,4 +219,100 @@ export function BreathingExercise({
 
     setIsMuted((previous) => !previous);
   };
-  
+
+
+  // Returns the text shown inside the breathing circle
+const getPhaseTitle = (current: BreathingPhase): string => {
+  switch (current) {
+    case "inhale":
+      return "Breathe In"
+
+    case "hold":
+      return "Hold"
+
+    case "exhale":
+      return "Breathe Out"
+
+    case "hold2":
+      return "Hold"
+
+    default:
+      return ""
+  }
+}
+
+// Returns the instruction displayed below the breathing circle
+const getPhaseInstruction = (current: BreathingPhase): string => {
+  switch (current) {
+    case "inhale":
+      return "Take a slow, deep breath through your nose."
+
+    case "hold":
+      return "Hold your breath gently without straining."
+
+    case "exhale":
+      return "Slowly breathe out through your mouth."
+
+    case "hold2":
+      return "Pause briefly before starting your next breath."
+
+    default:
+      return ""
+  }
+}
+
+// Background colour for each breathing phase
+const getPhaseColor = (current: BreathingPhase): string => {
+  switch (current) {
+    case "inhale":
+      return "bg-terracotta"
+
+    case "hold":
+    case "hold2":
+      return "bg-terracotta-dark"
+
+    case "exhale":
+      return "bg-sage"
+
+    default:
+      return "bg-terracotta"
+  }
+}
+
+// Animation scale for the breathing circle
+const getCircleScale = (current: BreathingPhase): number => {
+  switch (current) {
+    case "inhale":
+      return 1.3
+
+    case "hold":
+    case "hold2":
+      return 1.15
+
+    case "exhale":
+      return 1
+
+    default:
+      return 1
+  }
+}
+
+// Voice prompt spoken during each phase
+const getSpeechPrompt = (current: BreathingPhase): string => {
+  switch (current) {
+    case "inhale":
+      return "Breathe in slowly"
+
+    case "hold":
+      return "Hold"
+
+    case "exhale":
+      return "Breathe out slowly"
+
+    case "hold2":
+      return "Hold"
+
+    default:
+      return ""
+  }
+}
