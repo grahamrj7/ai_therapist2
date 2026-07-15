@@ -100,3 +100,123 @@ export function BreathingExercise({
       }
     };
   }, []);
+
+  const previousPhase = useRef<BreathingPhase | null>(null);
+
+  const phaseLabel = (current: BreathingPhase) => {
+    switch (current) {
+      case "inhale":
+        return "Breathe In";
+      case "hold":
+        return "Hold";
+      case "exhale":
+        return "Breathe Out";
+      case "hold2":
+        return "Hold";
+    }
+  };
+
+  const phaseInstruction = (current: BreathingPhase) => {
+    switch (current) {
+      case "inhale":
+        return "Inhale slowly through your nose.";
+      case "hold":
+        return "Hold your breath comfortably.";
+      case "exhale":
+        return "Slowly breathe out through your mouth.";
+      case "hold2":
+        return "Pause before your next breath.";
+    }
+  };
+
+  const phaseColour = (current: BreathingPhase) => {
+    switch (current) {
+      case "inhale":
+        return "bg-terracotta";
+      case "hold":
+      case "hold2":
+        return "bg-terracotta-dark";
+      case "exhale":
+        return "bg-sage";
+    }
+  };
+
+  const speechText = (current: BreathingPhase) => {
+    switch (current) {
+      case "inhale":
+        return "Breathe in slowly";
+      case "hold":
+        return "Hold";
+      case "exhale":
+        return "Breathe out slowly";
+      case "hold2":
+        return "Hold";
+    }
+  };
+
+  const speak = (current: BreathingPhase) => {
+    if (isMuted) return;
+
+    if (!window.speechSynthesis) return;
+
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(
+      speechText(current)
+    );
+
+    utterance.rate = 0.85;
+    utterance.pitch = 1;
+    utterance.volume = 0.9;
+
+    if (voiceName) {
+      const voices = window.speechSynthesis.getVoices();
+
+      const chosen = voices.find(
+        (voice) => voice.name === voiceName
+      );
+
+      if (chosen) {
+        utterance.voice = chosen;
+      }
+    }
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  useEffect(() => {
+    if (!isRunning) return;
+
+    if (previousPhase.current !== phase) {
+      speak(phase);
+      previousPhase.current = phase;
+    }
+  }, [phase, isRunning]);
+
+  const toggleExercise = () => {
+    if (isRunning) {
+      clearTimers();
+
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+
+      previousPhase.current = null;
+      setIsRunning(false);
+      return;
+    }
+
+    previousPhase.current = null;
+    setPhase("inhale");
+    setTimeLeft(PHASE_LENGTH);
+    setIsRunning(true);
+  };
+
+  const toggleMute = () => {
+    if (!isMuted && window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+
+    setIsMuted((previous) => !previous);
+  };
+  
