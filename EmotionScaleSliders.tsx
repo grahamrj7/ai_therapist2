@@ -124,3 +124,102 @@ export function EmotionScaleSliders({ onClose, onSave, initialEmotions, title = 
 
 export { DEFAULT_EMOTIONS }
 
+import { useState } from "react"
+import { motion } from "framer-motion"
+import { Sliders, ArrowLeft } from "lucide-react"
+import { Button } from "@/components/ui/button"
+
+export interface EmotionScale {
+  id: string
+  label: string
+  minLabel: string
+  maxLabel: string
+  value: number
+  color: string
+}
+
+interface EmotionScaleSlidersProps {
+  onClose: () => void
+  onSave?: (emotions: EmotionScale[]) => void
+  initialEmotions?: EmotionScale[]
+  title?: string
+}
+
+const DEFAULT_EMOTIONS: Omit<EmotionScale, "value">[] = [
+  { id: "anxiety", label: "Anxiety", minLabel: "Calm", maxLabel: "Very Anxious", color: "#D4A574" },
+  { id: "mood", label: "Mood", minLabel: "Low", maxLabel: "Great", color: "#A8B5A0" },
+  { id: "stress", label: "Stress", minLabel: "Relaxed", maxLabel: "Very Stressed", color: "#C9897A" },
+  { id: "energy", label: "Energy", minLabel: "Exhausted", maxLabel: "Energized", color: "#C9B8C8" },
+]
+
+export function EmotionScaleSliders({ onClose, onSave, initialEmotions, title = "How are you feeling?" }: EmotionScaleSlidersProps) {
+  const [emotions, setEmotions] = useState<EmotionScale[]>(() => {
+    if (initialEmotions) return initialEmotions
+    return DEFAULT_EMOTIONS.map(e => ({ ...e, value: 5 }))
+  })
+
+  const handleSliderChange = (id: string, value: number) => {
+    setEmotions(prev => prev.map(e => e.id === id ? { ...e, value } : e))
+  }
+
+  const handleSave = () => {
+    onSave?.(emotions)
+    onClose()
+  }
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-white z-10 flex flex-col">
+      <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-linen">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <Button variant="ghost" size="icon" onClick={onClose} className="rounded-full hover:bg-cream">
+            <ArrowLeft className="h-5 w-5 text-text-secondary" />
+          </Button>
+          <div className="flex items-center gap-2">
+            <Sliders className="h-5 w-5 text-terracotta" />
+            <h2 className="font-semibold text-lg text-text-primary">Emotion Check</h2>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4 sm:p-8">
+        <div className="max-w-md mx-auto space-y-6 sm:space-y-8">
+          <div className="text-center">
+            <h3 className="font-display text-xl sm:text-2xl text-text-primary mb-2">{title}</h3>
+            <p className="text-sm text-text-muted">Slide each bar to reflect how you're feeling right now</p>
+          </div>
+
+          <div className="space-y-5 sm:space-y-6">
+            {emotions.map((emotion) => (
+              <motion.div key={emotion.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full" style={{ backgroundColor: emotion.color }} />
+                    <span className="font-medium text-text-primary text-sm sm:text-base">{emotion.label}</span>
+                  </div>
+                  <div className="flex items-center text-text-muted">
+                    <span className="text-sm font-semibold">{emotion.value}/10</span>
+                  </div>
+                </div>
+
+                <div className="relative">
+                  <input type="range" min="1" max="10" step="1" value={emotion.value} onChange={(e) => handleSliderChange(emotion.id, parseInt(e.target.value))} className="w-full h-3 rounded-full appearance-none cursor-pointer" style={{ background: `linear-gradient(to right, ${emotion.color}40 0%, ${emotion.color} ${((emotion.value - 1) / 9) * 100}%, ${emotion.color}20 ${((emotion.value - 1) / 9) * 100}%, ${emotion.color}20 100%)` }} />
+                  <div className="absolute top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full shadow-md border-2 pointer-events-none transition-transform" style={{ left: `calc(${((emotion.value - 1) / 9) * 100}% - 10px)`, borderColor: emotion.color }} />
+                </div>
+
+                <div className="flex justify-between text-xs text-text-muted">
+                  <span>{emotion.minLabel}</span>
+                  <span>{emotion.maxLabel}</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+        </div>
+      </div>
+
+    </motion.div>
+  )
+}
+
+export { DEFAULT_EMOTIONS }
+
