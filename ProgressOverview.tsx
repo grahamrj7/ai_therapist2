@@ -46,3 +46,12 @@ export function ProgressOverview({
     </motion.div>
   )
 }
+import { useState } from "react"
+import { motion } from "framer-motion"
+import { TrendingUp, X } from "lucide-react"
+
+import {
+  type Goal,
+  type JournalEntry,
+} from "@/lib/db"
+
