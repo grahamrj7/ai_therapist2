@@ -1654,7 +1654,7 @@ export function GoalTracker({ userId, onClose }: GoalTrackerProps) {
           >
             <Save className="h-4 w-4 mr-2" />
             {saving ? "Saving..." : "Save Goal"}
-          </Button>
+          </Button> 
         </div>
       </motion.div>
     )
