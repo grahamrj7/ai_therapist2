@@ -111,7 +111,7 @@ export function GoalTracker({ userId, onClose }: GoalTrackerProps) {
         ) : (
           <div className="space-y-3 max-w-lg mx-auto">
             {goals.map((goal) => (
-              <div key={goal.id} className="p-4 rounded-xl border border-linen">{goal.title}</div>
+              <div key={goal.id} className="p-4 rounded-xl border border-linen">{goal.title}</div> 
             ))}
           </div>
         )}
