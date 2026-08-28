@@ -17,7 +17,7 @@ export function GoalTracker({ onClose }: GoalTrackerProps) {
         </div>
         <Button variant="ghost" size="icon" onClick={onClose}>
           <X className="h-5 w-5 text-text-secondary" />
-        </Button>
+        </Button> 
       </div>
     </motion.div>
   )
