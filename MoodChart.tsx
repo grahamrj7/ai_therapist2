@@ -233,3 +233,5 @@ export function MoodChart({ userId, onClose }: MoodChartProps) {
     </div>
   )
 }
+
+
