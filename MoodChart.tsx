@@ -53,3 +53,44 @@ export function MoodChart({ userId, onClose }: MoodChartProps) {
   return <div className="space-y-6"><p className="text-sm text-text-muted">{data.length} check-ins</p></div>
 }
 
+import { useState, useEffect, useMemo } from "react"
+import { LineChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import { Loader2 } from "lucide-react"
+import { loadEmotionHistory, type EmotionCheckin } from "@/lib/db"
+
+interface MoodChartProps {
+  userId: string
+  onClose?: () => void
+}
+
+function formatDate(timestamp: number): string {
+  const date = new Date(timestamp)
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+}
+
+export function MoodChart({ userId, onClose }: MoodChartProps) {
+  const [data, setData] = useState<EmotionCheckin[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true)
+      const history = await loadEmotionHistory(userId)
+      setData(history)
+      setLoading(false)
+    }
+    fetchData()
+  }, [userId])
+
+  const chartData = useMemo(() => data.map(entry => ({
+    date: formatDate(entry.timestamp),
+    anxiety: entry.anxiety,
+    mood: entry.mood,
+    stress: entry.stress,
+    energy: entry.energy,
+  })), [data])
+
+  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="h-8 w-8 animate-spin text-terracotta" /></div>
+
+  return <div className="h-64"><ResponsiveContainer width="100%" height="100%"><LineChart data={chartData}><CartesianGrid strokeDasharray="3 3" /><XAxis dataKey="date" /><YAxis domain={[0, 10]} /><Tooltip /></LineChart></ResponsiveContainer></div>
+}
